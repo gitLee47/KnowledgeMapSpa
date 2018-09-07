@@ -4,10 +4,12 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeModule } from './home/home.module';
+import { ErrorPageComponent } from './common/error-page/error-page.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ErrorPageComponent
   ],
   imports: [
     BrowserModule,
