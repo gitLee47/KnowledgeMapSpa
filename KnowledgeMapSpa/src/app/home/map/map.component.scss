@@ -1,0 +1,116 @@
+// @import '~sass/_variables';
+// @import '~sass/_mixins';
+
+$dark-background: #222;
+$simple-color: white;
+$border-color: #D8D8D8;
+$box-shadow-color: rgb(248, 0, 0);
+
+$large-media: 1921px;
+
+$default-font-family: 'Open Sans', sans-serif;
+$font-color-grey: #aaa;
+
+.boxshadow {
+    position: relative;
+    -moz-box-shadow: 1px 2px 4px $box-shadow-color;
+    -webkit-box-shadow: 1px 2px 4px $box-shadow-color;
+    box-shadow:  5px 2px 20px $box-shadow-color;
+    padding: 10px;
+    background: $dark-background;
+    border-radius: 10px;
+}
+
+/* Make the image fit the box */
+.boxshadow img {
+    width: 100%;
+    border: 1px solid #8a4419;
+    border-style: inset;
+}
+
+// .boxshadow::after {
+//     content: '';
+//     position: absolute;
+//     z-index: -1; /* hide shadow behind image */
+//     -webkit-box-shadow: 0 15px 20px rgba(0, 0, 0, 0.3);
+//     -moz-box-shadow: 0 15px 20px rgba(0, 0, 0, 0.3);
+//     box-shadow: 0 15px 20px rgba(23, 247, 3, 0.3);                
+//     width: 70%; 
+//     left: 15%; /* one half of the remaining 30% */
+//     height: 100px;
+//     bottom: 0;
+// }
+
+/*Animated SVG Hover Buttons by Tyler Peterson */
+
+/*   
+    Spot is the span on the inside of the href that
+    fills the parent and makes the hover and link work
+    for the entire div
+*/
+
+.spot {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+/*
+    This is the outer svg wrapper that the SVG itself will 
+    fill. Multiple svg-wrapper classes can be put side by side.
+*/
+
+.svg-wrapper {
+  margin-top: 0;
+  position: relative;
+  width: 150px;
+  /*make sure to use same height/width as in the html*/
+  height: 40px;
+  display: inline-block;
+  border-radius: 3px;
+  margin-left: 5px;
+  margin-right: 5px
+}
+/*
+  This is where we define the fill, color, thickness,
+  and stroke pattern of the SVG when there is no hover.
+  The dasharray and offset together define the line position
+  under the words. Here's also where the transition speed is set.
+*/
+
+#shape {
+  stroke-width: 6px;
+  fill: transparent;
+  stroke: #009FFD;
+  stroke-dasharray: 85 400;
+  stroke-dashoffset: -220;
+  transition: 1s all ease;
+}
+/* 
+    Pushing the text up into the SVG. Without this the
+    text would be below the div's.
+*/
+
+#text {
+  margin-top: -35px;
+  text-align: center;
+}
+
+#text a {
+  color: white;
+  text-decoration: none;
+  font-weight: 100;
+  font-size: 1.1em;
+}
+/* 
+    Changing the shape on hover. I change the color of the stroke,
+make it thinner, then set it to again wrap around the entire parent element.
+*/
+
+.svg-wrapper:hover #shape {
+  stroke-dasharray: 50 0;
+  stroke-width: 3px;
+  stroke-dashoffset: 0;
+  stroke: #06D6A0;
+}
