@@ -43,15 +43,15 @@ export class MapChartComponent implements OnInit, OnChanges {
     this.chartProps = {};
   
     var margin = { top: 30, right: 20, bottom: 30, left: 50 },
-    width = 600 - margin.left - margin.right,
-    height = 270 - margin.top - margin.bottom;
+    width = 1000,
+    height = 400;
 
     // Define map projection
     var projection = d3
     .geoEquirectangular()
     .center([0, 15]) // set centre to further North
     .scale(width/(2*Math.PI)) // scale to fit group width
-    .translate([width/2,height/2]) // ensure centred in group
+    .translate([width/2, height/2]) // ensure centred in group
     ;
 
     var path = d3
@@ -64,10 +64,8 @@ export class MapChartComponent implements OnInit, OnChanges {
 
     var svg = d3.select(this.chartElement.nativeElement)
     .append('svg')
-    .attr('width', width + margin.left + margin.right)
-    .attr('height', height + margin.top + margin.bottom)
-    .append('g')
-    .attr('transform', `translate(${margin.left},${margin.top})`)
+    .attr('width', width)
+    .attr('height', height)
     .call(zoom);
 
     this.countriesGroup = svg
@@ -75,12 +73,12 @@ export class MapChartComponent implements OnInit, OnChanges {
     .attr("id", "map");
 
     // add a background rectangle
-    // this.countriesGroup
-    // .append("rect")
-    // .attr("x", 0)
-    // .attr("y", 0)
-    // .attr("width", width)
-    // .attr("height", height);
+    this.countriesGroup
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", width)
+    .attr("height", height);
 
     var countries = this.countriesGroup
     .selectAll("path")
@@ -105,7 +103,61 @@ export class MapChartComponent implements OnInit, OnChanges {
         d3.select(this).classed("country-on", true);
         //boxZoom(path.bounds(d), path.centroid(d), 20);
     });
-    
+
+    var countryLabels = this.countriesGroup
+    .selectAll("g")
+    .data(this.jsonData.features)
+    .enter()
+    .append("g")
+    .attr("class", "countryLabel")
+    .attr("id", function(d) {
+        return "countryLabel" + d.properties.iso_a3;
+    })
+    .attr("transform", function(d) {
+        return (
+          "translate(" + path.centroid(d)[0] + "," + path.centroid(d)[1] + ")"
+        );
+    })
+    // add mouseover functionality to the label
+    .on("mouseover", function(d, i) {
+        d3.select(this).style("display", "block");
+    })
+    .on("mouseout", function(d, i) {
+        d3.select(this).style("display", "none");
+    })   
+    // add an onlcick action to zoom into clicked country
+    .on("click", function(d, i) {
+        d3.selectAll(".country").classed("country-on", false);
+        d3.select("#country" + d.properties.iso_a3).classed("country-on", true);
+        //boxZoom(path.bounds(d), path.centroid(d), 20);
+    });
+
+   
+
+    countryLabels
+    .append("text")
+    .attr("class", "countryName")
+    .style("text-anchor", "middle")
+    .attr("dx", 0)
+    .attr("dy", 0)
+    .text(function(d) {
+        return d.properties.name;
+    })
+    .call(this.getTextBox);
+
+    // add a background rectangle the same size as the text
+    countryLabels
+    .insert("rect", "text")
+    .attr("class", "countryBg")
+    .attr("transform", function(d) {
+        return "translate(" + (d.bbox.x - 2) + "," + d.bbox.y + ")";
+    })
+    .attr("width", function(d) {
+        return d.bbox.width + 4;
+    })
+    .attr("height", function(d) {
+        return d.bbox.height;
+    });      
   }
 
   zoomed() {

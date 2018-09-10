@@ -15,14 +15,12 @@ body {
 	background-color: $dark-background;
 	color: $font-color-grey;
 }
-
 .simple-container {
-	max-width: 675px;
+	max-width: 70%;
 	margin: 0 auto;
 	padding-top: 70px;
 	padding-bottom: 20px;
 }
-
 .simple-print {
 	fill: $simple-color;
 	stroke: $simple-color;
@@ -30,30 +28,24 @@ body {
 .simple-print svg {
 	height: 100%;
 }
-
 .simple-close {
 	color: $simple-color;
 	border-color: $simple-color;
 }
-
 .simple-ext-info {
 	border-top: 1px solid $font-color-grey;
 }
-
 p {
 	font-size: 16px;
 }
-
 h1 {
 	font-size: 30px;
 	line-height: 34px;
 }
-
 h2 {
 	font-size: 20px;
 	line-height: 25px;
 }
-
 h3 {
 	font-size: 16px;
 	line-height: 27px;
@@ -62,7 +54,6 @@ h3 {
 	border-bottom: 1px solid $border-color;
 	border-top: 1px solid $border-color;
 }
-
 hr {
 	height: 1px;
 	background-color: $border-color;
@@ -70,23 +61,18 @@ hr {
 	width: 100%;
 	margin: 0px;
 }
-
 a[href] {
 	color: #1e8ad6;
 }
-
 a[href]:hover {
 	color: #3ba0e6;
 }
-
 img {
 	max-width: 100%;
 }
-
 li {
 	line-height: 1.5em;
 }
-
 aside,
 [class *= "sidebar"],
 [id *= "sidebar"] {
@@ -95,9 +81,29 @@ aside,
 	border: 1px solid lightgrey;
 	padding: 5px 15px;
 }
-
 @media (min-width: $large-media) {
 	body {
 		font-size: 18px;
 	}
+}
+
+svg rect {
+    fill:transparent;   /* map background colour */
+}
+.country{
+    fill: #0a0a0a;   /* country colour */
+    stroke: rgba(5, 239, 247, 0.993); /* country border colour */
+	stroke-width: 0.5; /* country border width */
+}
+.country-on{
+    fill: #4B5358;   /* highlight colour for selected country */
+}
+.countryLabel{
+    display: none;   /* hide all country labels by default */
+}
+.countryName{
+    fill: rgb(0, 255, 115);;   /* country label text colour */
+}
+.countryLabelBg{
+    fill: #30BCED;   /* country label background colour */
 }
