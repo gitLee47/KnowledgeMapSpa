@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ChangeDetectionStrategy, ElementRef, Input, OnChanges, ViewChild} from '@angular/core';
 import * as d3 from 'd3';
 import { HomeService } from '../home.service';
+import { countryData, populationData } from '../home.models';
 
 @Component({
   selector: 'app-map-chart',
@@ -19,7 +20,7 @@ export class MapChartComponent implements OnInit, OnChanges {
 
   private jsonData: any;
   private countriesGroup: any;
-
+  
   constructor(private homeService: HomeService) { }
 
   ngOnInit() {
@@ -31,16 +32,50 @@ export class MapChartComponent implements OnInit, OnChanges {
   }
 
   getJsonData() {
-    this.homeService.getGlobalData().subscribe(jsonData => {
-      if(jsonData) {
-        this.jsonData = jsonData;
-        this.buildChart();
-      }
-    })
+    // this.homeService.getGlobalData().subscribe(jsonData => {
+    //   if(jsonData) {
+    //     this.jsonData = jsonData;
+    //     this.buildChart();
+    //   }
+    // })
+
+    this.jsonData = JSON.parse(countryData);
+    
+    this.buildChart();
   }
 
   buildChart() {
-    this.chartProps = {};
+    const color = d3.scaleThreshold<number, string>()
+    .domain([
+      10000,
+      100000,
+      500000,
+      1000000,
+      5000000,
+      10000000,
+      50000000,
+      100000000,
+      500000000,
+      1500000000
+    ])
+    .range([
+      "rgb(247,251,255)",
+      'rgb(222,235,247)', 
+      'rgb(198,219,239)', 
+      'rgb(158,202,225)',
+      'rgb(107,174,214)',
+      'rgb(66,146,198)',
+      'rgb(33,113,181)',
+      'rgb(8,81,156)',
+      'rgb(8,48,107)',
+      'rgb(3,19,43)'
+    ]);
+
+
+    const populationById = {};
+    var population = JSON.parse(populationData);
+    population.forEach(d => { populationById[d.id] = +d.population; });
+    this.jsonData.features.forEach(d => { d.population = populationById[d.id] });
   
     var margin = { top: 30, right: 20, bottom: 30, left: 50 },
     width = 1000,
@@ -51,9 +86,8 @@ export class MapChartComponent implements OnInit, OnChanges {
     .geoEquirectangular()
     .center([0, 15]) // set centre to further North
     .scale(width/(2*Math.PI)) // scale to fit group width
-    .translate([width/2, height/2]) // ensure centred in group
-    ;
-
+    .translate([width/2, height/2]); // ensure centred in group
+    
     var path = d3
     .geoPath()
     .projection(projection);
@@ -86,22 +120,23 @@ export class MapChartComponent implements OnInit, OnChanges {
     .enter()
     .append("path")
     .attr("d", path)
+    .style('fill', d => color(populationById[d.id]))
     .attr("id", function(d, i) {
-        return "country" + d.properties.iso_a3;
+      return "country" + d.id;
     })
     .attr("class", "country")
     // add a mouseover action to show name label for feature/country
     .on("mouseover", function(d, i) {
-        d3.select("#countryLabel" + d.properties.iso_a3).style("display", "block");
+      d3.select("#countryLabel" + d.id).style("display", "block");
     })
     .on("mouseout", function(d, i) {
-        d3.select("#countryLabel" + d.properties.iso_a3).style("display", "none");
+      d3.select("#countryLabel" + d.id).style("display", "none");
     })
     // add an onclick action to zoom into clicked country
     .on("click", function(d, i) {
-        d3.selectAll(".country").classed("country-on", false);
-        d3.select(this).classed("country-on", true);
-        //boxZoom(path.bounds(d), path.centroid(d), 20);
+      d3.selectAll(".country").classed("country-on", false);
+      d3.select(this).classed("country-on", true);
+      //boxZoom(path.bounds(d), path.centroid(d), 20);
     });
 
     var countryLabels = this.countriesGroup
@@ -111,28 +146,26 @@ export class MapChartComponent implements OnInit, OnChanges {
     .append("g")
     .attr("class", "countryLabel")
     .attr("id", function(d) {
-        return "countryLabel" + d.properties.iso_a3;
+      return "countryLabel" + d.id;
     })
     .attr("transform", function(d) {
-        return (
-          "translate(" + path.centroid(d)[0] + "," + path.centroid(d)[1] + ")"
-        );
+      return (
+        "translate(" + path.centroid(d)[0] + "," + path.centroid(d)[1] + ")"
+      );
     })
     // add mouseover functionality to the label
     .on("mouseover", function(d, i) {
-        d3.select(this).style("display", "block");
+      d3.select(this).style("display", "block");
     })
     .on("mouseout", function(d, i) {
-        d3.select(this).style("display", "none");
+      d3.select(this).style("display", "none");
     })   
     // add an onlcick action to zoom into clicked country
     .on("click", function(d, i) {
-        d3.selectAll(".country").classed("country-on", false);
-        d3.select("#country" + d.properties.iso_a3).classed("country-on", true);
-        //boxZoom(path.bounds(d), path.centroid(d), 20);
+      d3.selectAll(".country").classed("country-on", false);
+      d3.select("#country" + d.id).classed("country-on", true);
+      //boxZoom(path.bounds(d), path.centroid(d), 20);
     });
-
-   
 
     countryLabels
     .append("text")
@@ -141,7 +174,7 @@ export class MapChartComponent implements OnInit, OnChanges {
     .attr("dx", 0)
     .attr("dy", 0)
     .text(function(d) {
-        return d.properties.name;
+      return d.properties.name;
     })
     .call(this.getTextBox);
 
@@ -150,23 +183,23 @@ export class MapChartComponent implements OnInit, OnChanges {
     .insert("rect", "text")
     .attr("class", "countryBg")
     .attr("transform", function(d) {
-        return "translate(" + (d.bbox.x - 2) + "," + d.bbox.y + ")";
+      return "translate(" + (d.bbox.x - 2) + "," + d.bbox.y + ")";
     })
     .attr("width", function(d) {
-        return d.bbox.width + 4;
+      return d.bbox.width + 4;
     })
     .attr("height", function(d) {
-        return d.bbox.height;
+      return d.bbox.height;
     });      
   }
 
   zoomed() {
     var t = d3
-       .event
-       .transform
+      .event
+      .transform
     ;
     this.countriesGroup.attr(
-       "transform","translate(" + [t.x, t.y] + ")scale(" + t.k + ")"
+      "transform","translate(" + [t.x, t.y] + ")scale(" + t.k + ")"
     );
   }
 
