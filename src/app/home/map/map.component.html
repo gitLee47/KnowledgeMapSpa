@@ -1,15 +1,15 @@
 <div class="simple-container">
   <div class="boxshadow">
     <!-- <img src="assets/images/glow_map.jpg" /> -->
-    <app-map-chart></app-map-chart>
+    <app-map-chart [topic]="selectedTopic"></app-map-chart>
     
-    <button>Programming</button>
-    <button>Quantum Computing</button>
-    <button>AI</button>
-    <button>Machine Learning</button>
-    <button>Augmented Reality</button>
-    <button>Virtual Reality</button>
-    <button>IOT</button>
-    <button>Blockchain</button>
+    <button (click)="onTopicClick('Programming')">Programming</button>
+    <button (click)="onTopicClick('Quantum Computing')">Quantum Computing</button>
+    <button (click)="onTopicClick('AI')">AI</button>
+    <button (click)="onTopicClick('Machine Learning')">Machine Learning</button>
+    <button (click)="onTopicClick('Augmented Reality')">Augmented Reality</button>
+    <button (click)="onTopicClick('Virtual Reality')">Virtual Reality</button>
+    <button (click)="onTopicClick('IOT')">IOT</button>
+    <button (click)="onTopicClick('Blockchain')">Blockchain</button>
   </div>
 </div>

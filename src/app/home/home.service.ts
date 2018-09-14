@@ -17,6 +17,17 @@ export class HomeService {
     );
   }
 
+  public getTopicCount(topic: string): Observable<any> {
+    if (!topic.trim()) {
+      return of([]);
+    }
+
+    return this.http.get(`http://localhost:3000/v1/topics/${topic}`).pipe(
+      tap(data => console.log('fetched topics data')),
+      catchError(this.handleError('getTopicCount', []))
+    );
+  }
+
     /**
    * Handle Http operation that failed.
    * Let the app continue.

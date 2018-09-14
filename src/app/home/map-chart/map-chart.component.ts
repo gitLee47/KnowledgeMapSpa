@@ -11,6 +11,7 @@ import { countryData, populationData } from '../home.models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapChartComponent implements OnInit, OnChanges {
+  @Input() topic: string;
 
   @ViewChild('chart')
   chartElement: ElementRef;
@@ -19,29 +20,31 @@ export class MapChartComponent implements OnInit, OnChanges {
   private chartProps: any;
 
   private jsonData: any;
+  private population : any;
   private countriesGroup: any;
   
   constructor(private homeService: HomeService) { }
 
   ngOnInit() {
-    this.getJsonData();
+    this.getJsonData(this.topic);
   }
 
   ngOnChanges() {
 
   }
 
-  getJsonData() {
-    // this.homeService.getGlobalData().subscribe(jsonData => {
-    //   if(jsonData) {
-    //     this.jsonData = jsonData;
-    //     this.buildChart();
-    //   }
-    // })
+  getJsonData(topic: string) {
+    if(!topic) {
+      return [];
+    }
 
-    this.jsonData = JSON.parse(countryData);
-    
-    this.buildChart();
+    this.homeService.getTopicCount(topic).subscribe(populationData => {
+      if(populationData) {
+        this.population = populationData;
+        this.jsonData = JSON.parse(countryData);
+        this.buildChart();
+      }
+    })
   }
 
   buildChart() {
@@ -71,10 +74,9 @@ export class MapChartComponent implements OnInit, OnChanges {
       'rgb(3,19,43)'
     ]);
 
-
     const populationById = {};
-    var population = JSON.parse(populationData);
-    population.forEach(d => { populationById[d.id] = +d.population; });
+  
+    this.population.forEach(d => { populationById[d.id] = +d.population; });
     this.jsonData.features.forEach(d => { d.population = populationById[d.id] });
   
     var margin = { top: 30, right: 20, bottom: 30, left: 50 },

@@ -6,10 +6,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
-
+  selectedTopic: string;
   constructor() { }
 
   ngOnInit() {
+    this.selectedTopic = "Programming";
+  }
+
+  onTopicChange(topic: string) {
+    this.selectedTopic = topic;
   }
 
 }
