@@ -13,7 +13,7 @@ export class MapComponent implements OnInit {
     this.selectedTopic = "Programming";
   }
 
-  onTopicChange(topic: string) {
+  onTopicClick(topic: string) {
     this.selectedTopic = topic;
   }
 
