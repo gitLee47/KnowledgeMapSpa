@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { endpoints } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class HomeService {
       return of([]);
     }
 
-    return this.http.get(`http://localhost:3000/v1/topics/${topic}`).pipe(
+    return this.http.get(`${endpoints.knowledgeMapApi}/topics/${topic}`).pipe(
       tap(data => console.log('fetched topics data')),
       catchError(this.handleError('getTopicCount', []))
     );

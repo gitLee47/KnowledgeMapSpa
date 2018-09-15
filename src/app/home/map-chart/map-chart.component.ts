@@ -30,7 +30,7 @@ export class MapChartComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-
+   // this.getJsonData(this.topic);
   }
 
   getJsonData(topic: string) {
