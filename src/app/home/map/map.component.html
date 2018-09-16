@@ -1,15 +1,22 @@
 <div class="simple-container">
-  <div class="boxshadow">
-    <!-- <img src="assets/images/glow_map.jpg" /> -->
-    <app-map-chart [topic]="selectedTopic"></app-map-chart>
-    
-    <button (click)="onTopicClick('Programming')">Programming</button>
-    <button (click)="onTopicClick('Quantum Computing')">Quantum Computing</button>
-    <button (click)="onTopicClick('AI')">AI</button>
-    <button (click)="onTopicClick('Machine Learning')">Machine Learning</button>
-    <button (click)="onTopicClick('Augmented Reality')">Augmented Reality</button>
-    <button (click)="onTopicClick('Virtual Reality')">Virtual Reality</button>
-    <button (click)="onTopicClick('IOT')">IOT</button>
-    <button (click)="onTopicClick('Blockchain')">Blockchain</button>
+  <div class="container">
+    <div class="row">
+      <div class="boxshadow">
+        <!-- <img src="assets/images/glow_map.jpg" /> -->
+        <div class="container">
+          <app-map-chart [topic]="selectedTopic"></app-map-chart>
+        </div>
+        <div class="row buttongroup">
+          <button (click)="onTopicClick('Programming')">Programming</button>
+          <button (click)="onTopicClick('Quantum Computing')">Quantum Computing</button>
+          <button (click)="onTopicClick('AI')">AI</button>
+          <button (click)="onTopicClick('Machine Learning')">Machine Learning</button>
+          <button (click)="onTopicClick('Augmented Reality')">Augmented Reality</button>
+          <button (click)="onTopicClick('Virtual Reality')">Virtual Reality</button>
+          <button (click)="onTopicClick('IOT')">IOT</button>
+          <button (click)="onTopicClick('Blockchain')">Blockchain</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

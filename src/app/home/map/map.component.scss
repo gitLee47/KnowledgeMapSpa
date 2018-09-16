@@ -12,7 +12,7 @@
 }
 
 /* Make the image fit the box */
-.boxshadow img {
+.boxshadowcontent {
     width: 100%;
     border: 1px solid #8a4419;
     border-style: inset;
@@ -30,6 +30,9 @@
 //     height: 100px;
 //     bottom: 0;
 // }
+.buttongroup{
+  margin: 15px;
+}
 
 button{
   background:$dark-background;

@@ -78,10 +78,10 @@ export class MapChartComponent implements OnInit, OnChanges {
   
     this.population.forEach(d => { populationById[d.id] = +d.population; });
     this.jsonData.features.forEach(d => { d.population = populationById[d.id] });
-  
+
     var margin = { top: 30, right: 20, bottom: 30, left: 50 },
     width = 1000,
-    height = 400;
+    height = 550;
 
     // Define map projection
     var projection = d3
@@ -106,15 +106,16 @@ export class MapChartComponent implements OnInit, OnChanges {
 
     this.countriesGroup = svg
     .append("g")
-    .attr("id", "map");
+    .attr("id", "map")
+    .attr("class", "container");
 
     // add a background rectangle
-    this.countriesGroup
-    .append("rect")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", width)
-    .attr("height", height);
+    // this.countriesGroup
+    // .append("rect")
+    // .attr("x", 0)
+    // .attr("y", 0)
+    // .attr("width", width)
+    // .attr("height", height);
 
     var countries = this.countriesGroup
     .selectAll("path")
@@ -209,5 +210,9 @@ export class MapChartComponent implements OnInit, OnChanges {
     selection.each(function(d) {
       d.bbox = this.getBBox();
     });
+  }
+
+  resize() {
+     
   }
 }
