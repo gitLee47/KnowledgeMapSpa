@@ -22,15 +22,20 @@ export class MapChartComponent implements OnInit, OnChanges {
   private jsonData: any;
   private population : any;
   private countriesGroup: any;
+  private path: any;
+  private projection: any;
+  private color: any;
   
   constructor(private homeService: HomeService) { }
 
   ngOnInit() {
+    this.setupChart();
     this.getJsonData(this.topic);
   }
 
   ngOnChanges() {
-   // this.getJsonData(this.topic);
+    if(this.countriesGroup)
+      this.getJsonData(this.topic);
   }
 
   getJsonData(topic: string) {
@@ -47,8 +52,8 @@ export class MapChartComponent implements OnInit, OnChanges {
     })
   }
 
-  buildChart() {
-    const color = d3.scaleThreshold<number, string>()
+  setupChart() {
+    this.color = d3.scaleThreshold<number, string>()
     .domain([
       10000,
       100000,
@@ -74,25 +79,20 @@ export class MapChartComponent implements OnInit, OnChanges {
       'rgb(3,19,43)'
     ]);
 
-    const populationById = {};
-  
-    this.population.forEach(d => { populationById[d.id] = +d.population; });
-    this.jsonData.features.forEach(d => { d.population = populationById[d.id] });
-
     var margin = { top: 30, right: 20, bottom: 30, left: 50 },
     width = 1000,
     height = 550;
 
     // Define map projection
-    var projection = d3
+    this.projection = d3
     .geoEquirectangular()
     .center([0, 15]) // set centre to further North
     .scale(width/(2*Math.PI)) // scale to fit group width
     .translate([width/2, height/2]); // ensure centred in group
     
-    var path = d3
+    this.path = d3
     .geoPath()
-    .projection(projection);
+    .projection(this.projection);
 
     var zoom = d3
     .zoom()
@@ -108,7 +108,10 @@ export class MapChartComponent implements OnInit, OnChanges {
     .append("g")
     .attr("id", "map")
     .attr("class", "container");
+  }
 
+  buildChart() {
+    
     // add a background rectangle
     // this.countriesGroup
     // .append("rect")
@@ -116,14 +119,25 @@ export class MapChartComponent implements OnInit, OnChanges {
     // .attr("y", 0)
     // .attr("width", width)
     // .attr("height", height);
+  
+    d3.select("g")
+    .selectAll("path")
+    .remove();
+
+    d3.selectAll('#countryLabel')
+    .remove();
+
+    const populationById = {};
+    this.population.forEach(d => { populationById[d.id] = +d.population; });
+    this.jsonData.features.forEach(d => { d.population = populationById[d.id] });
 
     var countries = this.countriesGroup
     .selectAll("path")
     .data(this.jsonData.features)
     .enter()
     .append("path")
-    .attr("d", path)
-    .style('fill', d => color(populationById[d.id]))
+    .attr("d", this.path)
+    .style('fill', d => this.color(populationById[d.id]))
     .attr("id", function(d, i) {
       return "country" + d.id;
     })
@@ -142,6 +156,7 @@ export class MapChartComponent implements OnInit, OnChanges {
       //boxZoom(path.bounds(d), path.centroid(d), 20);
     });
 
+    var self = this;
     var countryLabels = this.countriesGroup
     .selectAll("g")
     .data(this.jsonData.features)
@@ -153,7 +168,7 @@ export class MapChartComponent implements OnInit, OnChanges {
     })
     .attr("transform", function(d) {
       return (
-        "translate(" + path.centroid(d)[0] + "," + path.centroid(d)[1] + ")"
+        "translate(" + self.path.centroid(d)[0] + "," + self.path.centroid(d)[1] + ")"
       );
     })
     // add mouseover functionality to the label
@@ -212,7 +227,38 @@ export class MapChartComponent implements OnInit, OnChanges {
     });
   }
 
-  resize() {
-     
+  updateChart() {
+    const populationById = {};
+    this.population.forEach(d => { populationById[d.id] = +d.population; });
+    this.jsonData.features.forEach(d => { d.population = populationById[d.id] });
+
+    d3.select("g")
+    .selectAll("path")
+    .remove();
+
+    var countries = this.countriesGroup
+    .selectAll("path")
+    .data(this.jsonData.features)
+    .enter()
+    .append("path")
+    .attr("d", this.path)
+    .style('fill', d => this.color(populationById[d.id]))
+    .attr("id", function(d, i) {
+      return "country" + d.id;
+    })
+    .attr("class", "country")
+    // add a mouseover action to show name label for feature/country
+    .on("mouseover", function(d, i) {
+      d3.select("#countryLabel" + d.id).style("display", "block");
+    })
+    .on("mouseout", function(d, i) {
+      d3.select("#countryLabel" + d.id).style("display", "none");
+    })
+    // add an onclick action to zoom into clicked country
+    .on("click", function(d, i) {
+      d3.selectAll(".country").classed("country-on", false);
+      d3.select(this).classed("country-on", true);
+      //boxZoom(path.bounds(d), path.centroid(d), 20);
+    });
   }
 }
