@@ -124,7 +124,7 @@ export class MapChartComponent implements OnInit, OnChanges {
     .selectAll("path")
     .remove();
 
-    d3.selectAll('#countryLabel')
+    d3.selectAll('.countryLabel')
     .remove();
 
     const populationById = {};
