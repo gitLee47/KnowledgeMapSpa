@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {ChangeDetectionStrategy, ElementRef, Input, OnChanges, ViewChild} from '@angular/core';
+
 import * as d3 from 'd3';
+
 import { HomeService } from '../home.service';
-import { countryData, populationData } from '../home.models';
+import { countryData, colors } from '../home.models';
 
 @Component({
   selector: 'app-map-chart',
@@ -53,31 +55,7 @@ export class MapChartComponent implements OnInit, OnChanges {
   }
 
   setupChart() {
-    this.color = d3.scaleThreshold<number, string>()
-    .domain([
-      10000,
-      100000,
-      500000,
-      1000000,
-      5000000,
-      10000000,
-      50000000,
-      100000000,
-      500000000,
-      1500000000
-    ])
-    .range([
-      "rgb(247,251,255)",
-      'rgb(222,235,247)', 
-      'rgb(198,219,239)', 
-      'rgb(158,202,225)',
-      'rgb(107,174,214)',
-      'rgb(66,146,198)',
-      'rgb(33,113,181)',
-      'rgb(8,81,156)',
-      'rgb(8,48,107)',
-      'rgb(3,19,43)'
-    ]);
+    
 
     var margin = { top: 30, right: 20, bottom: 30, left: 50 },
     width = 1000,
@@ -111,14 +89,22 @@ export class MapChartComponent implements OnInit, OnChanges {
   }
 
   buildChart() {
-    
-    // add a background rectangle
-    // this.countriesGroup
-    // .append("rect")
-    // .attr("x", 0)
-    // .attr("y", 0)
-    // .attr("width", width)
-    // .attr("height", height);
+
+    var colorIndex = Math.floor(Math.random() * colors.length + 1);
+    this.color = d3.scaleThreshold<number, string>()
+    .domain([
+      10000,
+      100000,
+      500000,
+      1000000,
+      5000000,
+      10000000,
+      50000000,
+      100000000,
+      500000000,
+      1500000000
+    ])
+    .range(colors[colorIndex]);
   
     d3.select("g")
     .selectAll("path")
@@ -199,7 +185,7 @@ export class MapChartComponent implements OnInit, OnChanges {
     // add a background rectangle the same size as the text
     countryLabels
     .insert("rect", "text")
-    .attr("class", "countryBg")
+    .attr("class", "countryLabelBg")
     .attr("transform", function(d) {
       return "translate(" + (d.bbox.x - 2) + "," + d.bbox.y + ")";
     })
