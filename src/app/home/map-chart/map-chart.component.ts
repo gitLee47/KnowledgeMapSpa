@@ -90,7 +90,7 @@ export class MapChartComponent implements OnInit, OnChanges {
 
   buildChart() {
 
-    var colorIndex = Math.floor(Math.random() * colors.length + 1);
+    var colorIndex = Math.floor(Math.random() * colors.length);
     this.color = d3.scaleThreshold<number, string>()
     .domain([
       10000,
