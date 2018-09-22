@@ -55,8 +55,6 @@ export class MapChartComponent implements OnInit, OnChanges {
   }
 
   setupChart() {
-    
-
     var margin = { top: 30, right: 20, bottom: 30, left: 50 },
     width = 1000,
     height = 550;
@@ -74,7 +72,15 @@ export class MapChartComponent implements OnInit, OnChanges {
 
     var zoom = d3
     .zoom()
-    .on("zoom", this.zoomed)
+    .on("zoom", ()=> {
+      var t = d3
+      .event
+      .transform;
+
+      this.countriesGroup.attr(
+        "transform","translate(" + [t.x, t.y] + ")scale(" + t.k + ")"
+      );
+    });
 
     var svg = d3.select(this.chartElement.nativeElement)
     .append('svg')
@@ -89,7 +95,6 @@ export class MapChartComponent implements OnInit, OnChanges {
   }
 
   buildChart() {
-
     var colorIndex = Math.floor(Math.random() * colors.length);
     this.color = d3.scaleThreshold<number, string>()
     .domain([
@@ -197,54 +202,11 @@ export class MapChartComponent implements OnInit, OnChanges {
     });      
   }
 
-  zoomed() {
-    var t = d3
-      .event
-      .transform
-    ;
-    this.countriesGroup.attr(
-      "transform","translate(" + [t.x, t.y] + ")scale(" + t.k + ")"
-    );
-  }
+ 
 
   getTextBox(selection) {
     selection.each(function(d) {
       d.bbox = this.getBBox();
-    });
-  }
-
-  updateChart() {
-    const populationById = {};
-    this.population.forEach(d => { populationById[d.id] = +d.population; });
-    this.jsonData.features.forEach(d => { d.population = populationById[d.id] });
-
-    d3.select("g")
-    .selectAll("path")
-    .remove();
-
-    var countries = this.countriesGroup
-    .selectAll("path")
-    .data(this.jsonData.features)
-    .enter()
-    .append("path")
-    .attr("d", this.path)
-    .style('fill', d => this.color(populationById[d.id]))
-    .attr("id", function(d, i) {
-      return "country" + d.id;
-    })
-    .attr("class", "country")
-    // add a mouseover action to show name label for feature/country
-    .on("mouseover", function(d, i) {
-      d3.select("#countryLabel" + d.id).style("display", "block");
-    })
-    .on("mouseout", function(d, i) {
-      d3.select("#countryLabel" + d.id).style("display", "none");
-    })
-    // add an onclick action to zoom into clicked country
-    .on("click", function(d, i) {
-      d3.selectAll(".country").classed("country-on", false);
-      d3.select(this).classed("country-on", true);
-      //boxZoom(path.bounds(d), path.centroid(d), 20);
     });
   }
 }
