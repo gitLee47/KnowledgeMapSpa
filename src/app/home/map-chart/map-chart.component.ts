@@ -18,6 +18,9 @@ export class MapChartComponent implements OnInit, OnChanges {
   @ViewChild('chart')
   chartElement: ElementRef;
 
+  @ViewChild('legend')
+  legendElement: ElementRef;
+
   private svgElement: HTMLElement;
   private chartProps: any;
 
@@ -199,7 +202,28 @@ export class MapChartComponent implements OnInit, OnChanges {
     })
     .attr("height", function(d) {
       return d.bbox.height;
-    });      
+    });     
+    
+    d3.select(this.legendElement.nativeElement)
+      .selectAll('ul')
+      .remove();
+    
+    // build the map legend
+    var legend = d3.select(this.legendElement.nativeElement)
+        .append('ul')
+        .attr('class', 'list-inline');
+
+    var keys = legend.selectAll('li.key')
+        .data(this.color.range());
+
+    var legend_items = ["Low", "", "", "", "", "", "", "", "High"];
+
+    keys.enter().append('li')
+        .attr('class', 'key')
+        .style('border-top-color', String)
+        .text(function (d, i) {
+            return legend_items[i];
+        });
   }
 
  
